@@ -41,7 +41,7 @@ func convertRandomNumbers(numbers []NumberData) {
 				resultsBatch = append(resultsBatch, convertFromBaseTo(value.Number, value.Base, value.Target))
 			}
 			resultChannel <- resultsBatch
-		}(numbers[i:i+step])
+		}(numbers[i : i+step])
 	}
 
 	for i := 0; i < len(numbers); i += step {
@@ -63,4 +63,25 @@ func convertToBase(number, targetBase int) int {
 	numberInTargetBase := strconv.FormatInt(int64(number), targetBase)
 	actualNumber, _ := strconv.ParseInt(numberInTargetBase, 10, 32)
 	return int(actualNumber)
+}
+
+func toDigits(number, base int) string {
+	digits := ""
+	for number > 0 {
+		digits = fmt.Sprintf("%d", number%base) + digits
+		number = number / base
+	}
+	return digits
+}
+
+func fromDigits(digits string, base int) int {
+	number := 0
+	for _, char := range digits {
+		number = number*base + int(char-'0')
+	}
+	return number
+}
+
+func convertBaseWithDigits(number string, base, target int) string {
+	return toDigits(fromDigits(number, base), target)
 }
